@@ -92,7 +92,7 @@ EXAMPLES += nonlinear_chain_ocp_nlp
 #EXAMPLES += nonlinear_chain_ocp_nlp_no_interface
 EXAMPLES += wind_turbine_nmpc
 #EXAMPLES += engine_example
-EXAMPLES += regularization
+#EXAMPLES += regularization
 EXAMPLES += simple_dae_example
 
 examples: $(EXAMPLES)
@@ -118,7 +118,7 @@ RUN_EXAMPLES += run_nonlinear_chain_ocp_nlp
 #RUN_EXAMPLES += run_nonlinear_chain_ocp_nlp_no_interface
 RUN_EXAMPLES += run_wind_turbine_nmpc
 #RUN_EXAMPLES += run_engine_example
-RUN_EXAMPLES += run_regularization
+#RUN_EXAMPLES += run_regularization
 RUN_EXAMPLES += run_simple_dae_example
 
 # overwrite to run just one

@@ -1,4 +1,5 @@
-#
+#!/home/dilara/acados/.venv/bin/python
+
 # Copyright (c) The acados authors.
 #
 # This file is part of acados.
