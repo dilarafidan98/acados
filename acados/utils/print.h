@@ -36,7 +36,7 @@
 extern "C" {
 #endif
 
-#include "acados/dense_qp/dense_qp_common.h"
+#include "/home/dilara/acados/acados/dense_qp/dense_qp_common.h"
 #include "acados/ocp_nlp/ocp_nlp_common.h"
 #include "acados/ocp_qp/ocp_qp_common.h"
 #include "acados/ocp_qp/ocp_qp_common_frontend.h"

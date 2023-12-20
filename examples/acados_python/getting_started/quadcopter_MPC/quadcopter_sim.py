@@ -31,7 +31,7 @@
 
 from acados_template import AcadosSim, AcadosSimSolver
 from quadcopter_model import export_quadcopter_ode_model
-from utils import plot_quadcopter
+from utils import plot_drone
 import numpy as np
 
 def main():
@@ -46,7 +46,7 @@ def main():
     Tf = 0.1
     nx = model.x.size()[0]
     nu = model.u.size()[0]
-    N = 200
+    N = 30
 
     # set simulation time
     sim.solver_options.T = Tf
@@ -61,8 +61,8 @@ def main():
     acados_integrator = AcadosSimSolver(sim)
 
     simX = np.zeros((N+1, nx))
-    x0 = np.array([0.0, 0.0, 0.0, 0.0,0.0,0.0])
-    u0 = np.array([0.0,0.0,0.0])
+    x0 = np.array([0.1 +1,-0.1 +1, 0.2+1, 0.0,0.0,0.0])
+    u0 = np.array([10,0.0,0.0])
     acados_integrator.set("u", u0)
 
     simX[0,:] = x0
@@ -86,7 +86,7 @@ def main():
     print("S_forw, sensitivities of simulation result wrt x,u:\n", S_forw)
 
     # plot results
-    plot_quadcopter(np.linspace(0, N*Tf, N+1), 3, np.repeat(u0, N), simX, latexify=False)
+    plot_drone(np.linspace(0, N*Tf, N+1), 10, np.tile(u0, (N, 1)), simX, latexify=False)
 
 
 if __name__ == "__main__":

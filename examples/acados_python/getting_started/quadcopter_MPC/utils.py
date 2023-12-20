@@ -33,7 +33,7 @@ import numpy as np
 from acados_template import latexify_plot
 
 
-def plot_quadcopter(shooting_nodes, u_max, U, X_true, X_est=None, Y_measured=None, latexify=False, plt_show=True, X_true_label=None):
+def plot_drone(shooting_nodes, u_max, U, X_true, X_est=None, Y_measured=None, latexify=False, plt_show=True, X_true_label=None):
     """
     Params:
         shooting_nodes: time values of the discretization
@@ -43,15 +43,17 @@ def plot_quadcopter(shooting_nodes, u_max, U, X_true, X_est=None, Y_measured=Non
         X_est: arrray with shape (N_sim-N_mhe, nx)
         Y_measured: array with shape (N_sim, ny)
         latexify: latex style plots
-    """
 
+    
+    """
     if latexify:
         latexify_plot()
 
     WITH_ESTIMATION = X_est is not None and Y_measured is not None
 
     N_sim = X_true.shape[0]
-    nx = X_true.shape[1]  # Should be 6 (roll, pitch, yaw, roll rate, pitch rate, yaw rate)
+    nx = X_true.shape[1]
+    nu = U.shape[1]
 
     Tf = shooting_nodes[N_sim-1]
     t = shooting_nodes
@@ -61,23 +63,39 @@ def plot_quadcopter(shooting_nodes, u_max, U, X_true, X_est=None, Y_measured=Non
         N_mhe = N_sim - X_est.shape[0]
         t_mhe = np.linspace(N_mhe * Ts, Tf, N_sim-N_mhe)
 
-    for i in range(U.shape[1]):
-        plt.subplot(U.shape[1]+nx, 1, i+1)
-        line, = plt.step(t, np.append([U[0, i]], U[:, i]), where='post')
+    # Check if u_max is a single value or an array
+    single_u_max = np.isscalar(u_max)
+
+    total_plots = nu + nx
+    plt.figure(figsize=(10, 3 * total_plots))  # Adjust the size of the figure as needed
+    print("First few rows of U:", U[:5, :])
+
+
+    # Plotting
+    for i in range(nu):  # Assuming nu is the number of control inputs
+        plt.subplot(total_plots, 1, i + 1)
+        line, = plt.step(t, np.append([U[0, i]], U[:, i]))
         if X_true_label is not None:
-            line.set_label(X_true_label)
-        plt.ylabel(f'$u_{i+1}$')
+           line.set_label(X_true_label)
+        else:
+           line.set_color('r')
+        print(i)
+
+        plt.ylabel(f'$u_{i}$')
         plt.xlabel('$t$')
-        plt.hlines(u_max[i], t[0], t[-1], linestyles='dashed', alpha=0.7)
-        plt.hlines(-u_max[i], t[0], t[-1], linestyles='dashed', alpha=0.7)
-        plt.ylim([-1.2*u_max[i], 1.2*u_max[i]])
+
+        # Handling u_max for each control input
+        current_u_max = u_max if single_u_max else u_max[i]
+        plt.hlines(current_u_max, t[0], t[-1], linestyles='dashed', alpha=0.7)
+        plt.hlines(-current_u_max, t[0], t[-1], linestyles='dashed', alpha=0.7)
+        plt.ylim([-1.2 * current_u_max, 1.2 * current_u_max])
         plt.xlim(t[0], t[-1])
         plt.grid()
 
-    states_labels = ['$Roll$', '$Pitch$', '$Yaw$', '$\dot{Roll}$', '$\dot{Pitch}$', '$\dot{Yaw}$']
+    states_lables = ['$roll$', '$pitch$', '$yaw$', '$roll rate$','$pitch rate$','$yaw rate$']
 
     for i in range(nx):
-        plt.subplot(U.shape[1]+nx, 1, U.shape[1]+i+1)
+        plt.subplot(total_plots, 1, i+4)
         line, = plt.plot(t, X_true[:, i], label='true')
         if X_true_label is not None:
             line.set_label(X_true_label)
@@ -86,13 +104,17 @@ def plot_quadcopter(shooting_nodes, u_max, U, X_true, X_est=None, Y_measured=Non
             plt.plot(t_mhe, X_est[:, i], '--', label='estimated')
             plt.plot(t, Y_measured[:, i], 'x', label='measured')
 
-        plt.ylabel(states_labels[i])
+        plt.ylabel(states_lables[i])
         plt.xlabel('$t$')
         plt.grid()
         plt.legend(loc=1)
         plt.xlim(t[0], t[-1])
 
-    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, hspace=0.4)
+    plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, hspace=0.5)
+
+    plt.tight_layout()
 
     if plt_show:
-        plt.show()
+       plt.show()
+
+    

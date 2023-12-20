@@ -106,8 +106,8 @@ def export_quadcopter_ode_model() -> AcadosModel:
     
 
     # Explicit dynamics
-    f_expl = vertcat(roll,pitch,yaw,tau_x @ c3 + tau_z @ c4, c7 @ tau_y ,tau_x @ c4 + tau_z @ c9)
-    f_impl=xdot - f_expl
+    f_expl = vertcat(roll_rate,pitch_rate,yaw_rate,tau_x @ c3 + tau_z @ c4, c7 @ tau_y ,tau_x @ c4 + tau_z @ c9)
+    f_impl= xdot - f_expl
     
     
 
